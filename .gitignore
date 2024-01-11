@@ -1,6 +1,14 @@
 # Local directory
 localonly/
 
+# Files created by knitting Rmd
+.pdf
+.txt
+
+# Ignore extra datasets
+S2_Dataset.csv
+S3_Dataset.csv
+
 # History files
 .Rhistory
 .Rapp.history
