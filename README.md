@@ -7,8 +7,8 @@
 - [study by Janet](https://doi.org/10.1371/journal.pone.0131529)
 
 ## **Repo Guide**
-- [assignments posted here](https://github.com/lindseygking/foreign-language-decisions.git)
-- [dataset stored here](https://github.com/lindseygking/foreign-language-decisions.git)
+- ~~[assignments posted here](https://github.com/lindseygking/foreign-language-decisions.git)~~
+- ~~[dataset stored here](https://github.com/lindseygking/foreign-language-decisions.git)~~
 
 
 ### **Rmd formatting guide**
