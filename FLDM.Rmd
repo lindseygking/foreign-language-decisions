@@ -93,6 +93,29 @@ hello_world("French")
 * Milk
 * Bread
 
+```{r data read-in}
+# read dataset from csv file into rmd
+FLDM_data <- read.csv("S1_Dataset.csv")
+```
+
+<!-- data tidying todo
+  - remove extra columns (only need r2 mean score, not individuals)
+  - arrange participant IDs in order -->
+
+```{r tidy data}
+library(dplyr)
+# create new tidy dataframe from original dataframe
+FLDM_tidy <- FLDM_data %>% 
+  # remove unwanted columns
+  select(-c(l2.conversation, l2.reading, l2.understanding, l2.writing)) %>% 
+  #arrange the ID numbers in ascending order
+  arrange(ID)
+
+# export tidy dataframe to a csv file
+write_csv(FLDM_tidy, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/FLDM_tidy.csv") 
+```
+
+  
 # Methods
 We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
 
