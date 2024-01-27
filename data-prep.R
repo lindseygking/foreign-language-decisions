@@ -1,18 +1,20 @@
-# read dataset from csv file 
-FLDM_tidy_data <- read.csv("FLDM_tidy.csv")
+library(tidyverse)
 
+# read dataset from csv file 
+FLDM_tidy_long <- read.csv("FLDM_tidy.csv") %>%
+  # remove extraneous columns
+  select(-c(order, l2.mean.skills, l2.years, age, gender, language.group)) %>% 
+  # remove outlier row
+  slice(-c(74)) %>% 
+  # make data longer by having dilemma type as its own column 
+  pivot_longer(cols = c("trolley.choice", "footbridge.choice", "non.moral.choice"),
+               names_to = "dilemma.type",
+               values_to = "dilemma.choice")
+  
+  
 # add zeros before id numbers with stringr to make each id number 3 digits long (consistency)
-stringr::
-  
-# remove extraneous columns
-# the only columns you need are: participant ID, language condition, choices, and language proficiency 
-FLDM_tidy_data <- select(-c(#insert unwanted columns here
-  ))
-  
-# make data long for the sake of the tidyverse
-# turn dilemma type from individual rows to one column 
-# each participant will have 3 rows (one for each dilemma type)
-pivot_longer()
+FLDM_tidy_long$ID <- str_pad(FLDM_tidy_long$ID, 3, pad = '0') 
+
 
 # export dataframe to a csv file
-write_csv(FLDM_tidy_data, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/FLDM_tidy_data.csv") 
+write_csv(FLDM_tidy_long, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/FLDM_tidy_long.csv") 
