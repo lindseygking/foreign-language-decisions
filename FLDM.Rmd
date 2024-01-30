@@ -128,6 +128,8 @@ We report how we determined our sample size, all data exclusions (if any), all m
 
 ## Data analysis
 We used `r cite_r("r-references.bib")` for all our analyses.
+
+# Assignment 10 plot markups
 ```{r consequentialism plot }
 library(ggplot2)
 
@@ -138,7 +140,7 @@ library(ggplot2)
 # x axis: 3 chunks (trolley, footbridge, non-moral) each with 2 bars (1/lang. condition)
 # expectation: foreign lang. condition is more consequential in all condition
 ```
-
+ 
 ![consequentialism plot markup](plot1markup.jpg)
 
 ```{r foreign language proficiency plot}
