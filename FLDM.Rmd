@@ -100,7 +100,8 @@ FLDM_data <- read.csv("S1_Dataset.csv")
 
 <!-- data tidying todo
   - remove extra columns (only need r2 mean score, not individuals)
-  - arrange participant IDs in order -->
+  - arrange participant IDs in order 
+  - add zeros before id numbers with stringr to make each id number 3 digits long (consistency) -->
 
 ```{r tidy data}
 library(dplyr)
@@ -127,7 +128,30 @@ We report how we determined our sample size, all data exclusions (if any), all m
 
 ## Data analysis
 We used `r cite_r("r-references.bib")` for all our analyses.
+```{r consequentialism plot }
+library(ggplot2)
 
+## plot showing average choices for each moral dilemma in native versus foreign lang.
+
+# format: bar graph
+# y axis: % consequentialist (based on choices 1 = consequentialist or 0 = deontological)
+# x axis: 3 chunks (trolley, footbridge, non-moral) each with 2 bars (1/lang. condition)
+# expectation: foreign lang. condition is more consequential in all condition
+```
+
+![consequentialism plot markup](plot1markup.jpg)
+
+```{r foreign language proficiency plot}
+
+## plot showing if there is any correlation between proficiency & decision in foreign language condition
+
+# format: line graph
+# y axis: same as above, consequentialist response %
+# x axis: proficiency in foreign language from 6-10
+# expectation: unsure! maybe more proficient leads to more consequential
+```
+
+![language proficiency plot markup](plot2markup.jpg)
 
 # Results
 
