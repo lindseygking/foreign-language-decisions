@@ -139,6 +139,12 @@ library(ggplot2)
 # y axis: % consequentialist (based on choices 1 = consequentialist or 0 = deontological)
 # x axis: 3 chunks (trolley, footbridge, non-moral) each with 2 bars (1/lang. condition)
 # expectation: foreign lang. condition is more consequential in all condition
+
+FLDM_tidy_long %>% 
+  ggplot(aes(x = dilemma.type, y = dilemma.choice)) +
+  geom_bar(stat = "identity")
+
+# need to figure out how to seperate dilemma type by language condition
 ```
  
 ![consequentialism plot markup](plot1markup.jpg)
