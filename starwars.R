@@ -38,7 +38,8 @@ sw.wrangled <- starwars %>%
   # show height in inches (height_in) and centimeters (height_cm)
   add_column(height_in = .$height_cm/2.54
              , .after = "initials" ) %>% 
-  mutate(brown_hair = ifelse(hair == "brown", "True", "False"))
+  mutate(brown_hair = ifelse(hair == "brown", "True", "False")) %>% 
+  mutate(species_first_letter = str_extract(species, "\\b[A-Z]{1}"))
 
 View(sw.wrangled)
 
@@ -77,3 +78,42 @@ sw.wrangled %>%
   geom_point(shape = 17) +
   xlim(0, 100) +
   ylim(0, 160)
+
+
+### ASSIGNMENT 12 MORE PLOTS
+
+## PLOT 1 
+
+hair_order <- c('none', 'brown', 'black', 'bald', 'white', 'blond', 'auburn, white', 'blonde', 'brown, grey', 'grey')
+
+sw.wrangled %>% 
+  ggplot(aes(x = factor(hair, level = hair_order), y = mass, fill = hair)) +
+  geom_boxplot(alpha = .5) +
+  coord_cartesian(ylim = c(0, 160)) +
+  scale_y_continuous(breaks = seq(0, 160, by = 40)) +
+  geom_jitter(data = sw.wrangled, aes(x = factor(hair, level = hair_order), y = mass, col = hair)) +
+  labs(x = "Hair Color(s)", y = "Mass (kg)", fill = "Colorful hair")
+
+## PLOT 2
+
+sw.wrangled %>% 
+  ggplot(aes(x = mass, y = height_in)) +
+  geom_point() +
+  facet_wrap(vars(brown_hair), 
+             labeller = labeller(brown_hair = c("True" = "Has brown hair", "False" = "No brown hair"))) +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(-200, 200), ylim = c(-4, 100)) +
+  scale_x_continuous(breaks = seq(-200, 200, by = 100)) +
+  scale_y_continuous(breaks = seq(-4, 100, by = 20)) +
+  labs(title = "Mass vs. height by brown-hair-havingness", subtitle = "A critically important analysis")
+
+## PLOT 3
+# x = species_first_letter, y = count, fill = gender, flip axes 
+sw.wrangled %>% 
+  mutate(species_first_letter = str_extract(species, "\\b[A-Z]{1}")) %>%
+  filter(!is.na(species_first_letter)) %>% 
+  ggplot(aes(x = factor(species_first_letter, levels = rev(levels(factor(species_first_letter)))), fill = gender)) +
+  geom_bar() +
+  coord_flip() +
+  labs(x = "species_first_letter")
+

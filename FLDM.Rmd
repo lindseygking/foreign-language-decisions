@@ -132,31 +132,34 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 # Assignment 10 plot markups
 ```{r consequentialism plot }
 library(ggplot2)
-
+library(scales)
 ## plot showing average choices for each moral dilemma in native versus foreign lang.
 
-# format: bar graph
-# y axis: % consequentialist (based on choices 1 = consequentialist or 0 = deontological)
-# x axis: 3 chunks (trolley, footbridge, non-moral) each with 2 bars (1/lang. condition)
-# expectation: foreign lang. condition is more consequential in all condition
-
-FLDM_tidy_long %>% 
-  ggplot(aes(x = dilemma.type, y = dilemma.choice)) +
-  geom_bar(stat = "identity")
-
-# need to figure out how to seperate dilemma type by language condition
+FLDM_English %>% 
+  ggplot(aes(x = dilemma.type, y = dilemma.choice, fill = language.group)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  facet_wrap(vars(language.group),
+             labeller = labeller(language.group = c(`1` = "Native (Italian)", `5` = "Foreign (English)"))) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_bw() +
+  scale_fill_manual(values = c("#d4729f", "#f09d5d")) +
+  labs(x = "Dilemma", y = "Consequentialist Response")
 ```
  
 ![consequentialism plot markup](plot1markup.jpg)
 
 ```{r foreign language proficiency plot}
 
-## plot showing if there is any correlation between proficiency & decision in foreign language condition
+## plot showing native versus German
+# green hex for German #63a15f
 
-# format: line graph
-# y axis: same as above, consequentialist response %
-# x axis: proficiency in foreign language from 6-10
-# expectation: unsure! maybe more proficient leads to more consequential
+FLDM_German %>% 
+  ggplot(aes(x = dilemma.type, y = dilemma.choice, fill = language.group)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(vars(language.group),
+             labeller = labeller(language.group = c(`1` = "Native (Italian)", `3` = "Foreign (German)")))
+
+# clean up to match the labels and formatting of first plot
 ```
 
 ![language proficiency plot markup](plot2markup.jpg)
