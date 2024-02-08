@@ -148,18 +148,30 @@ FLDM_English %>%
  
 ![consequentialism plot markup](plot1markup.jpg)
 
-```{r foreign language proficiency plot}
+```{r foreign language = German plot}
 
 ## plot showing native versus German
 # green hex for German #63a15f
 
 FLDM_German %>% 
   ggplot(aes(x = dilemma.type, y = dilemma.choice, fill = language.group)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", show.legend = FALSE) +
   facet_wrap(vars(language.group),
-             labeller = labeller(language.group = c(`1` = "Native (Italian)", `3` = "Foreign (German)")))
+             labeller = labeller(language.group = c(`1` = "Native (Italian)", `3` = "Foreign (German)"))) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_bw() +
+  scale_fill_manual(values = c("#d4729f", "#63a15f")) +
+  labs(x = "Dilemma", y = "Consequentialist Response")
 
 # clean up to match the labels and formatting of first plot
+```
+```{r proficiency in foreign language plot}
+### Third bonus plot still in the works
+
+FLDM_tidy_long %>% 
+  #subset(language.condition = 0) %>% 
+  ggplot(aes(x = proficiency, y = dilemma.choice)) +
+  geom_histogram(stat = "identity")
 ```
 
 ![language proficiency plot markup](plot2markup.jpg)

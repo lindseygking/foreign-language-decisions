@@ -117,3 +117,36 @@ sw.wrangled %>%
   coord_flip() +
   labs(x = "species_first_letter")
 
+
+### ASSIGNMENT 13 LAST PLOT YAY
+## I surrender
+
+# install.packages("ggsci")
+library(ggsci)
+
+sw.wrangled %>% 
+  ggplot(aes(x = height_cm, y = mass, color = gender)) +
+  scale_color_uchicago() +
+  geom_point() +
+  geom_smooth(fill = "lavender", method = "lm") +
+  facet_wrap(vars(gender),
+             scales = "free_y",
+             labeller = labeller(gender = c("f" = "Female", "m" = "Male", 'NA' = "Other"))) +
+  scale_x_continuous(breaks = seq(60, 270, by = 30)) +
+  theme(panel.grid.major.y = element_line(linetype = 'dotdash', color = "gray"),
+        panel.grid.major.x = element_line(linetype = 'dashed'),
+        panel.grid.minor = element_line(linetype = 'blank'),
+        panel.background = element_rect(fill = "seashell"),
+        strip.background = element_rect(fill = "#006400"),
+        strip.text = element_text(color = "white", family = "American Typewriter", hjust = 0),
+        axis.title = element_text(family = "Comic Sans MS"),
+        title = element_text(family = "Comic Sans MS"),
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 45)) +
+  labs(title = "Height and weight across gender presentation", 
+       subtitle = 'A cautionary tale in misleading "free" axis scales & bad design choice',
+       x = "Height (cm)",
+       y = "Mass (kg)", 
+       color = "Gender Presentation",
+       caption = "Color hint: use the ggsci package!")
+  
