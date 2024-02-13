@@ -39,7 +39,7 @@ wordcount         : "X"
 
 bibliography      : "r-references.bib"
 
-floatsintext      : no
+floatsintext      : yes
 linenumbers       : yes
 draft             : no
 mask              : no
@@ -116,6 +116,31 @@ FLDM_tidy <- FLDM_data %>%
 write_csv(FLDM_tidy, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/FLDM_tidy.csv") 
 ```
 
+```{r long data}
+library(tidyverse)
+library(reshape2)
+# read dataset from csv file 
+FLDM_tidy_long <- read.csv("FLDM_tidy.csv") %>%
+  # remove extraneous columns
+  select(-c(order, l2.mean.skills, l2.years, age, gender)) %>% 
+  # remove outlier row
+  slice(-c(74)) %>% 
+  # make data longer by having dilemma type as its own column 
+  pivot_longer(cols = c("trolley.choice", "footbridge.choice", "non.moral.choice"),
+               names_to = "dilemma.type",
+               values_to = "dilemma.choice")
+
+FLDM_tidy_long$language.group <- as.factor(FLDM_tidy_long$language.group)
+  
+# add zeros before id numbers with stringr to make each id number 3 digits long (consistency)
+FLDM_tidy_long$ID <- str_pad(FLDM_tidy_long$ID, 3, pad = '0') 
+
+FLDM_German <- FLDM_tidy_long %>% 
+  filter(language.group != 5)
+
+FLDM_English <- FLDM_tidy_long %>% 
+  filter(language.group != 3)
+```
   
 # Methods
 We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
@@ -130,7 +155,9 @@ We report how we determined our sample size, all data exclusions (if any), all m
 We used `r cite_r("r-references.bib")` for all our analyses.
 
 # Assignment 10 plot markups
-```{r consequentialism plot }
+```{r English, fig.cap="Italian versus English"}
+#install.packages("magick")
+library(magick)
 library(ggplot2)
 library(scales)
 ## plot showing average choices for each moral dilemma in native versus foreign lang.
@@ -146,37 +173,59 @@ FLDM_English %>%
   labs(x = "Dilemma", y = "Consequentialist Response")
 ```
  
-![consequentialism plot markup](plot1markup.jpg)
 
-```{r foreign language = German plot}
+
+```{r German, fig.cap="Italian versus German"}
 
 ## plot showing native versus German
 # green hex for German #63a15f
 
 FLDM_German %>% 
   ggplot(aes(x = dilemma.type, y = dilemma.choice, fill = language.group)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
-  facet_wrap(vars(language.group),
-             labeller = labeller(language.group = c(`1` = "Native (Italian)", `3` = "Foreign (German)"))) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  geom_bar(position = 'dodge', stat = 'identity') +
+  scale_y_continuous(labels = scales::percent_format(scale = 100)) +
   theme_bw() +
-  scale_fill_manual(values = c("#d4729f", "#63a15f")) +
-  labs(x = "Dilemma", y = "Consequentialist Response")
+  scale_fill_manual(values = c("#d4729f", "lavender"), labels = c('Native (Italian)', 'Foreign (German)'),) +
+  labs(x = "Dilemma", y = "Consequentialist Response", fill = "Language Group")
 
 # clean up to match the labels and formatting of first plot
 ```
-```{r proficiency in foreign language plot}
+```{r Proficiency, fig.cap="Proficiency of foreign language."}
 ### Third bonus plot still in the works
 
 FLDM_tidy_long %>% 
-  #subset(language.condition = 0) %>% 
+  filter(language.condition == 0) %>% 
   ggplot(aes(x = proficiency, y = dilemma.choice)) +
-  geom_histogram(stat = "identity")
+  geom_jitter(stat = "identity") +
+  geom_smooth()
 ```
 
-![language proficiency plot markup](plot2markup.jpg)
+```{r demographics df}
+# df for demographics table 
+Condition <- c('Italian', 'German', 'English')
+N <- c(39, 28, 36)
+trolley.means <- c('54%','73%','61%')
+footbridge.means <- c('13%', '43%', '36%')
+non.moral.means <- c('87%', '92%', '93%')
+FLDM_demographics <- data.frame(Condition, N, trolley.means, footbridge.means, non.moral.means)
+
+```
+
+```{r demographic-table}
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+
+kable(FLDM_demographics, caption = 'Demographics With Consequentialist Means', col.names = c('Condition', 'N', 'Trolley Mean %', 'Footbridge Mean %', 'Non-Moral Mean %'), align = 'c') %>% 
+ kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+
+```
+
 
 # Results
+Table\ \@ref(tab:demographic-table) shows the breakdown of the language categories as well as the mean consequentialism participants exhibited for the different dilemmas.
+
+To understand these percentages better, they can be viewed in Figure\ \@ref(fig:English) and Figure\ \@ref(fig:German). 
 
 # Discussion
 
