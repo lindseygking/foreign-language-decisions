@@ -221,6 +221,41 @@ kable(FLDM_demographics, caption = 'Demographics With Consequentialist Means', c
 
 ```
 
+## Assignment 15 analysis plans
+# descriptive
+summarized df of dilemma choices for each language condition 
+```{r descriptive}
+## Assignment 16 conduct descriptive analysis 
+
+# select only the necessary groups
+FLDM_desc <- FLDM_data %>% 
+  select(language.group, trolley.choice, footbridge.choice, non.moral.choice) %>% 
+  drop_na() 
+
+# make longer for sake of dplyr
+FLDM_desc_long <- FLDM_desc %>% 
+  pivot_longer(c(trolley.choice, footbridge.choice, non.moral.choice), names_to = "dilemma.type")
+
+# group by language group and dilemma choice to get descriptives for each subgroup 
+FLDM_desc_long %>% 
+  group_by(language.group, dilemma.type) %>% 
+  summarize(mean = mean(value),
+            median = median(value),
+            sd = sd(value))
+
+```
+
+# hypothesis test 
+ANCOVA for effect of language group on dilemma choice for each dilemma type 
+```{r hypothesis-test}
+## 2-way anova for now until I look into ancova ANCOVA 
+
+anova_language_dilemma <- aov(value ~ language.group + dilemma.type, data=FLDM_desc_long)
+summary(anova_language_dilemma)
+
+TukeyHSD(anova_language_dilemma)
+```
+
 
 # Results
 Table\ \@ref(tab:demographic-table) shows the breakdown of the language categories as well as the mean consequentialism participants exhibited for the different dilemmas.
