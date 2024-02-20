@@ -104,7 +104,7 @@ FLDM_data <- read.csv("S1_Dataset.csv")
   - add zeros before id numbers with stringr to make each id number 3 digits long (consistency) -->
 
 ```{r tidy data}
-library(dplyr)
+library(tidyverse)
 # create new tidy dataframe from original dataframe
 FLDM_tidy <- FLDM_data %>% 
   # remove unwanted columns
@@ -143,10 +143,9 @@ FLDM_English <- FLDM_tidy_long %>%
 ```
   
 # Methods
-We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
 
 ## Participants
-
+Participants were 
 ## Material
 
 ## Procedure
@@ -242,25 +241,46 @@ FLDM_desc_long %>%
   summarize(mean = mean(value),
             median = median(value),
             sd = sd(value))
+```
+
+```{r descriptive-ungrouped}
+# not grouped by language condition to show totals 
+FLDM_desc_long %>% 
+  group_by(dilemma.type) %>% 
+  summarize(mean = mean(value),
+            median = median(value),
+            sd = sd(value))
 
 ```
 
 # hypothesis test 
 ANCOVA for effect of language group on dilemma choice for each dilemma type 
+
 ```{r hypothesis-test}
-## 2-way anova for now until I look into ancova ANCOVA 
-
+## ANCOVA 
+library(car)
+library(psych)
+library(stats)
+library(lme4)
+library(scales)
+library(broom)
+library(papaja)
 anova_language_dilemma <- aov(value ~ language.group + dilemma.type, data=FLDM_desc_long)
-summary(anova_language_dilemma)
+ancova_language_dilemma <- Anova(anova_language_dilemma, type="III")
 
-TukeyHSD(anova_language_dilemma)
+tidy_ancova <- tidy(ancova_language_dilemma)
+
+ancova_language_dilemma
 ```
 
 
 # Results
-Table\ \@ref(tab:demographic-table) shows the breakdown of the language categories as well as the mean consequentialism participants exhibited for the different dilemmas.
 
-To understand these percentages better, they can be viewed in Figure\ \@ref(fig:English) and Figure\ \@ref(fig:German). 
+A significant effect of dilemma type on consequentialism across language conditions ($p$ `r apa_p(tidy_ancova[[3, "p.value"]], add_equals=T)`) is seen showing that any differences in consequentialism are not due to misunderstanding in the foreign language. This is because we expect consequentialism to be highest in the non-moral dilemma ($\mu$ = `r mean(FLDM_desc$non.moral.choice)`) and lowest in the footbridge dilemma ($\mu$ = `r mean(FLDM_desc$footbridge.choice)`) . This is because there is no moral dilemma in the non-moral dilemma and therefore no reason to not choose the consequentialist response where as the inverse is true for the footbridge dilemma. The trolley dilemma falls in the middle ($\mu$ = `r mean(FLDM_desc$trolley.choice)`). To understand these percentages better, they can be viewed in Figure\ \@ref(fig:English) and Figure\ \@ref(fig:German).
+
+Table\ \@ref(tab:demographic-table) shows the breakdown of the language categories as well as the mean consequentialism participants exhibited for the different dilemmas. There is a significant effect of 
+language condition on consequentialism ($p$ `r apa_p(tidy_ancova[[2, "p.value"]], add_equals=T)`). 
+
 
 # Discussion
 
