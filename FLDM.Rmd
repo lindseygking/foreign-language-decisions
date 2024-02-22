@@ -141,14 +141,16 @@ library(scales)
 ## plot showing average choices for each moral dilemma in native versus foreign lang.
 
 FLDM_English %>% 
-  ggplot(aes(x = dilemma.type, y = dilemma.choice, fill = language.group)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
-  facet_wrap(vars(language.group),
-             labeller = labeller(language.group = c(`1` = "Native (Italian)", `5` = "Foreign (English)"))) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  na.omit() %>% 
+  group_by(dilemma.type, language.group) %>% 
+  summarise(mean_choice = mean(dilemma.choice)) %>% 
+  ggplot(aes(x = dilemma.type, y = mean_choice, fill = language.group)) +
+  geom_col(position = 'dodge') +
+  scale_y_continuous(labels = scales::percent_format(scale = 100)) +
   theme_bw() +
-  scale_fill_manual(values = c("#d4729f", "#f09d5d")) +
-  labs(x = "Dilemma", y = "Consequentialist Response") 
+  scale_fill_manual(values = c("#d4729f", "#f09d5d"), 
+                    labels = c('Native (Italian)', 'Foreign (English)'),) +
+  labs(x = "Dilemma", y = "Consequentialist Response", fill = "Language Group")
 ```
  
 
@@ -159,15 +161,19 @@ FLDM_English %>%
 # green hex for German #63a15f
 
 FLDM_German %>% 
-  ggplot(aes(x = dilemma.type, y = dilemma.choice, fill = language.group)) +
-  geom_bar(position = 'dodge', stat = 'identity') +
+  group_by(dilemma.type,language.group) %>% 
+  summarise(mean_choice = mean(dilemma.choice)) %>% 
+  ggplot(aes(x = dilemma.type, y = mean_choice, fill = language.group)) +
+  geom_col(position = 'dodge') +
   scale_y_continuous(labels = scales::percent_format(scale = 100)) +
   theme_bw() +
   scale_fill_manual(values = c("#d4729f", "lavender"), labels = c('Native (Italian)', 'Foreign (German)'),) +
   labs(x = "Dilemma", y = "Consequentialist Response", fill = "Language Group")
 
-# clean up to match the labels and formatting of first plot
+
 ```
+
+
 ```{r Proficiency, fig.cap="Proficiency of foreign language."}
 ### Third bonus plot still in the works
 
