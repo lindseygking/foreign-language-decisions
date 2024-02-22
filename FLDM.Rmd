@@ -55,7 +55,7 @@ output            : papaja::apa6_pdf
 ```{r setup, include = FALSE}
 library("papaja")
 r_refs("r-references.bib")
-
+# load packages you want cited before this chunk
 # add in R script
 source("FLDM.R")
 ```
@@ -71,37 +71,12 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 source("FLDM.R")
 ```
 
-```{r helloworld}
-# call hello world function
-hello_world("French")
-```
-
-<!-- Assignment #5 basic markdown formatting practice -->
-
-# **_Formatting Practice_**
-
-## **Ordered List**
-### _ToDo List_
-1. [D2M Homework](https://nrdowling.github.io/d2m/index.html#Course_schedule) 
-2. Put away laundry
-3. Unload dishwasher
-4. Watch Packers game (go pack)
-
-## **Unordered List**
-### _Grocery List_
-* Eggs
-* Milk
-* Bread
 
 ```{r data read-in}
 # read dataset from csv file into rmd
 FLDM_data <- read.csv("S1_Dataset.csv")
 ```
 
-<!-- data tidying todo
-  - remove extra columns (only need r2 mean score, not individuals)
-  - arrange participant IDs in order 
-  - add zeros before id numbers with stringr to make each id number 3 digits long (consistency) -->
 
 ```{r tidy data}
 library(tidyverse)
@@ -141,12 +116,16 @@ FLDM_German <- FLDM_tidy_long %>%
 FLDM_English <- FLDM_tidy_long %>% 
   filter(language.group != 3)
 ```
+# Introduction 
+
+  @geipelForeignLanguageEffect2015 tested the effects of foreign language on moral decision making, finding that participants were more consequentialist, or willing to take an action that may be unmoral to ultimately save a life, when they are asked in their foreign language. It is also seen that people are in general less consequentialist when presented with the footbridge dilemma compared to the original trolley dilemma. This is likely because of the increased involvement in the footbridge dilemma (having to physically push someone onto the train track) compared to the trolley dilemma [@greenePushingMoralButtons2009]. This involvement in the dilemma is tied to higher levels of emotion as well which has been shown to lead to less consequentialist choices in moral dilemmas [@huebnerRoleEmotionMoral2009]. Given this information, it is sensical that foreign language would lead to higher consequentialist responses. This is because we know that people are more rational and systematic and less emotional in their decision making in a foreign language[@cipollettiMoralForeignLanguageEffect2016; @costaYourMoralsDepend2014].
   
 # Methods
 
 ## Participants
-Participants were 
+
 ## Material
+This is a replication of Study 1 in the paper by @geipelForeignLanguageEffect2015. The trolley problem originates from @thomsonTrolleyProblem1985 and is adapted to test moral decision making across language conditions. 
 
 ## Procedure
 
@@ -169,7 +148,7 @@ FLDM_English %>%
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
   theme_bw() +
   scale_fill_manual(values = c("#d4729f", "#f09d5d")) +
-  labs(x = "Dilemma", y = "Consequentialist Response")
+  labs(x = "Dilemma", y = "Consequentialist Response") 
 ```
  
 
