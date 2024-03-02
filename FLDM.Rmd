@@ -40,7 +40,7 @@ wordcount         : "X"
 bibliography      : "r-references.bib"
 
 floatsintext      : yes
-linenumbers       : yes
+linenumbers       : no
 draft             : no
 mask              : no
 
@@ -49,15 +49,42 @@ tablelist         : no
 footnotelist      : no
 
 classoption       : "man"
+header-includes:
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+documentclass     : "apa7"
 output            : papaja::apa6_pdf
 ---
+```{r packages}
+# library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(car)
+library(psych)
+library(stats)
+library(lme4)
+library(scales)
+library(broom)
+library(papaja)
+# library(reshape2)
+```
 
 ```{r setup, include = FALSE}
 library("papaja")
 r_refs("r-references.bib")
 # load packages you want cited before this chunk
-# add in R script
-source("FLDM.R")
 ```
 
 ```{r analysis-preferences}
@@ -72,50 +99,7 @@ source("FLDM.R")
 ```
 
 
-```{r data read-in}
-# read dataset from csv file into rmd
-FLDM_data <- read.csv("S1_Dataset.csv")
-```
 
-
-```{r tidy data}
-library(tidyverse)
-# create new tidy dataframe from original dataframe
-FLDM_tidy <- FLDM_data %>% 
-  # remove unwanted columns
-  select(-c(l2.conversation, l2.reading, l2.understanding, l2.writing)) %>% 
-  #arrange the ID numbers in ascending order
-  arrange(ID)
-
-# export tidy dataframe to a csv file
-write_csv(FLDM_tidy, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/FLDM_tidy.csv") 
-```
-
-```{r long data}
-library(tidyverse)
-library(reshape2)
-# read dataset from csv file 
-FLDM_tidy_long <- read.csv("FLDM_tidy.csv") %>%
-  # remove extraneous columns
-  select(-c(order, l2.mean.skills, l2.years, age, gender)) %>% 
-  # remove outlier row
-  slice(-c(74)) %>% 
-  # make data longer by having dilemma type as its own column 
-  pivot_longer(cols = c("trolley.choice", "footbridge.choice", "non.moral.choice"),
-               names_to = "dilemma.type",
-               values_to = "dilemma.choice")
-
-FLDM_tidy_long$language.group <- as.factor(FLDM_tidy_long$language.group)
-  
-# add zeros before id numbers with stringr to make each id number 3 digits long (consistency)
-FLDM_tidy_long$ID <- str_pad(FLDM_tidy_long$ID, 3, pad = '0') 
-
-FLDM_German <- FLDM_tidy_long %>% 
-  filter(language.group != 5)
-
-FLDM_English <- FLDM_tidy_long %>% 
-  filter(language.group != 3)
-```
 # Introduction 
 
   @geipelForeignLanguageEffect2015 tested the effects of foreign language on moral decision making, finding that participants were more consequentialist, or willing to take an action that may be unmoral to ultimately save a life, when they are asked in their foreign language. It is also seen that people are in general less consequentialist when presented with the footbridge dilemma compared to the original trolley dilemma. This is likely because of the increased involvement in the footbridge dilemma (having to physically push someone onto the train track) compared to the trolley dilemma [@greenePushingMoralButtons2009]. This involvement in the dilemma is tied to higher levels of emotion as well which has been shown to lead to less consequentialist choices in moral dilemmas [@huebnerRoleEmotionMoral2009]. Given this information, it is sensical that foreign language would lead to higher consequentialist responses. This is because we know that people are more rational and systematic and less emotional in their decision making in a foreign language[@cipollettiMoralForeignLanguageEffect2016; @costaYourMoralsDepend2014].
@@ -123,28 +107,27 @@ FLDM_English <- FLDM_tidy_long %>%
 # Methods
 
 ## Participants
+One hundred and five students were recruited from @UniTrento. These students are native Italian speakers enrolled in either German or English courses. 
 
 ## Material
-This is a replication of Study 1 in the paper by @geipelForeignLanguageEffect2015. The trolley problem originates from @thomsonTrolleyProblem1985 and is adapted to test moral decision making across language conditions. 
+This is a replication of Study 1 in the paper by @geipelForeignLanguageEffect2015. The trolley problem originates from @thomsonTrolleyProblem1985 and is adapted to test moral decision making across language conditions. Exact questions provided were modified from @greeneFMRIInvestigationEmotional2001. Participants are presented with three moral dilemmas with different levels of personal involvement with the expectation that the less involved the participant is in the scenario, the easier it will be for them to make the rational, moral decision [@hareMoralThinkingIts1981].  Translated to the trolley problem, individuals are more likely to push a button to redirect a train killing one person and saving five, but are less likely to push a person off a bridge to stop the train and save five [@cushmanRoleConsciousReasoning2006]. 
 
 ## Procedure
 
 ## Data analysis
-We used `r cite_r("r-references.bib")` for all our analyses.
+We used `r cite_r("r-references.bib")` for all our analyses. All statistical outputs will be interpreted through the framework provided by @cummingUnderstandingNewStatistics2013. 
 
-# Assignment 10 plot markups
-```{r English, fig.cap="Italian versus English"}
-#install.packages("magick")
-library(magick)
-library(ggplot2)
-library(scales)
+
+```{r English, fig.cap="Italian versus English", warning = FALSE}
+
 ## plot showing average choices for each moral dilemma in native versus foreign lang.
 
 FLDM_English %>% 
   na.omit() %>% 
   group_by(dilemma.type, language.group) %>% 
   summarise(mean_choice = mean(dilemma.choice)) %>% 
-  ggplot(aes(x = dilemma.type, y = mean_choice, fill = language.group)) +
+  ggplot(aes(x = factor(dilemma.type, level = c('footbridge.choice', 'trolley.choice', 'non.moral.choice')),
+             y = mean_choice, fill = language.group)) +
   geom_col(position = 'dodge') +
   scale_y_continuous(labels = scales::percent_format(scale = 100)) +
   theme_bw() +
@@ -155,26 +138,25 @@ FLDM_English %>%
  
 
 
-```{r German, fig.cap="Italian versus German"}
+```{r German, fig.cap="Italian versus German", warning = FALSE}
 
 ## plot showing native versus German
-# green hex for German #63a15f
 
 FLDM_German %>% 
   group_by(dilemma.type,language.group) %>% 
   summarise(mean_choice = mean(dilemma.choice)) %>% 
-  ggplot(aes(x = dilemma.type, y = mean_choice, fill = language.group)) +
+  ggplot(aes(x = factor(dilemma.type, level = c('footbridge.choice', 'trolley.choice', 'non.moral.choice')),
+             y = mean_choice, fill = language.group)) +
   geom_col(position = 'dodge') +
   scale_y_continuous(labels = scales::percent_format(scale = 100)) +
   theme_bw() +
-  scale_fill_manual(values = c("#d4729f", "lavender"), labels = c('Native (Italian)', 'Foreign (German)'),) +
+  scale_fill_manual(values = c("#d4729f", "lavender"), 
+                    labels = c('Native (Italian)', 'Foreign (German)'),) +
   labs(x = "Dilemma", y = "Consequentialist Response", fill = "Language Group")
-
-
 ```
 
 
-```{r Proficiency, fig.cap="Proficiency of foreign language."}
+```{r Proficiency, fig.cap="Proficiency of foreign language.", warning = FALSE}
 ### Third bonus plot still in the works
 
 FLDM_tidy_long %>% 
@@ -184,44 +166,20 @@ FLDM_tidy_long %>%
   geom_smooth()
 ```
 
-```{r demographics df}
-# df for demographics table 
-Condition <- c('Italian', 'German', 'English')
-N <- c(39, 28, 36)
-trolley.means <- c('54%','73%','61%')
-footbridge.means <- c('13%', '43%', '36%')
-non.moral.means <- c('87%', '92%', '93%')
-FLDM_demographics <- data.frame(Condition, N, trolley.means, footbridge.means, non.moral.means)
 
-```
 
 ```{r demographic-table}
-library(knitr)
-library(tidyverse)
-library(kableExtra)
 
 kable(FLDM_demographics, caption = 'Demographics With Consequentialist Means', col.names = c('Condition', 'N', 'Trolley Mean %', 'Footbridge Mean %', 'Non-Moral Mean %'), align = 'c') %>% 
  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 
 ```
 
-## Assignment 15 analysis plans
-# descriptive
-summarized df of dilemma choices for each language condition 
+
 ```{r descriptive}
-## Assignment 16 conduct descriptive analysis 
-
-# select only the necessary groups
-FLDM_desc <- FLDM_data %>% 
-  select(language.group, trolley.choice, footbridge.choice, non.moral.choice) %>% 
-  drop_na() 
-
-# make longer for sake of dplyr
-FLDM_desc_long <- FLDM_desc %>% 
-  pivot_longer(c(trolley.choice, footbridge.choice, non.moral.choice), names_to = "dilemma.type")
 
 # group by language group and dilemma choice to get descriptives for each subgroup 
-FLDM_desc_long %>% 
+FLDM_descriptives <- FLDM_desc_long %>% 
   group_by(language.group, dilemma.type) %>% 
   summarize(mean = mean(value),
             median = median(value),
@@ -230,12 +188,11 @@ FLDM_desc_long %>%
 
 ```{r descriptive-ungrouped}
 # not grouped by language condition to show totals 
-FLDM_desc_long %>% 
+FLDM_desc_ung <- FLDM_desc_long %>% 
   group_by(dilemma.type) %>% 
   summarize(mean = mean(value),
             median = median(value),
             sd = sd(value))
-
 ```
 
 # hypothesis test 
@@ -243,19 +200,13 @@ ANCOVA for effect of language group on dilemma choice for each dilemma type
 
 ```{r hypothesis-test}
 ## ANCOVA 
-library(car)
-library(psych)
-library(stats)
-library(lme4)
-library(scales)
-library(broom)
-library(papaja)
+
 anova_language_dilemma <- aov(value ~ language.group + dilemma.type, data=FLDM_desc_long)
 ancova_language_dilemma <- Anova(anova_language_dilemma, type="III")
 
 tidy_ancova <- tidy(ancova_language_dilemma)
 
-ancova_language_dilemma
+
 ```
 
 
