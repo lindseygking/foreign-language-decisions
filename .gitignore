@@ -3,6 +3,7 @@ localonly/
 # Files created by knitting Rmd
 .pdf
 .txt
+.tex
 # Ignore extra datasets
 S2_Dataset.csv
 S3_Dataset.csv
