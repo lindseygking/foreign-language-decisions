@@ -43,3 +43,5 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 assignment2_papaja.Rmd
+# weird mac file
+.DS_Store
