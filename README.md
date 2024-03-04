@@ -8,18 +8,12 @@
 - The goal of this study is to see if people approach moral dilemmas differently based on the language (native versus foreign) the dilemma is presented in. 
 
 ## **Repo Guide**
-- ~~[assignments posted here](https://github.com/lindseygking/foreign-language-decisions.git)~~
-- ~~[dataset stored here](https://github.com/lindseygking/foreign-language-decisions.git)~~
+*Folders:*
+- data: includes original and transformed .csv files of the dataset used
+- homework: includes misc. assignments not directly needed for final manuscript
+- FLDM_files: includes plot pdf and png files 
 
 ## **Todo**
-- learn to generate link to a specific branch
-- upload dataset to repo
-- move files to specific branches 
+- finalize manuscript!
 
-### **Rmd formatting guide**
-- *italics*
-- **bold**
-- 'code'
-- [links](rmarkdown.rstudio.com)
-- ~~strikethrough~~
 
