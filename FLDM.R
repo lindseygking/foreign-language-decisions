@@ -1,6 +1,6 @@
 
 # read dataset from csv file 
-FLDM_tidy_long <- read.csv("FLDM_tidy.csv") %>%
+FLDM_tidy_long <- read.csv("data/FLDM_tidy.csv") %>%
   # remove extraneous columns
   select(-c(order, l2.mean.skills, l2.years, age, gender)) %>% 
   # remove outlier row
@@ -19,7 +19,7 @@ FLDM_tidy_long$ID <- str_pad(FLDM_tidy_long$ID, 3, pad = '0')
 
 
 # export dataframe to a csv file
-write_csv(FLDM_tidy_long, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/FLDM_tidy_long.csv") 
+write_csv(FLDM_tidy_long, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/data/FLDM_tidy_long.csv") 
 
 FLDM_German <- FLDM_tidy_long %>% 
   filter(language.group != 5)
@@ -41,7 +41,7 @@ FLDM_demographics <- data.frame(Condition, N, trolley.means, footbridge.means, n
 
 
 ## conduct descriptive analysis 
-FLDM_data <- read.csv("S1_Dataset.csv")
+FLDM_data <- read.csv("data/S1_Dataset.csv")
 
 FLDM_tidy <- FLDM_data %>% 
   # remove unwanted columns
