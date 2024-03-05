@@ -212,6 +212,6 @@ The significant effects found in this study are quite profound as the p-values f
 \newpage
 
 # References
-
+ 
 ::: {#refs custom-style="Bibliography"}
 :::
