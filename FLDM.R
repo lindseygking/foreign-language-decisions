@@ -12,7 +12,7 @@ FLDM_tidy_long <- read.csv("data/FLDM_tidy.csv") %>%
 
 
 FLDM_tidy_long$language.group <- as.factor(FLDM_tidy_long$language.group)
-
+FLDM_tidy_long$language.condition <- as.factor(FLDM_tidy_long$language.condition)
 
 # add zeros before id numbers with stringr to make each id number 3 digits long (consistency)
 FLDM_tidy_long$ID <- str_pad(FLDM_tidy_long$ID, 3, pad = '0') 
@@ -32,7 +32,7 @@ FLDM_English <- FLDM_tidy_long %>%
 
 
 # df for demographics table 
-Condition <- c('Italian', 'German', 'English')
+Condition <- c('Italian', 'English', 'German')
 N <- c(39, 28, 36)
 trolley.means <- c('54%','73%','61%')
 footbridge.means <- c('13%', '43%', '36%')
@@ -51,7 +51,7 @@ FLDM_tidy <- FLDM_data %>%
 
 # select only the necessary groups
 FLDM_desc <- FLDM_tidy %>% 
-  select(language.group, trolley.choice, footbridge.choice, non.moral.choice) %>% 
+  select(language.condition, language.group, trolley.choice, footbridge.choice, non.moral.choice) %>% 
   drop_na() 
 
 # make longer for sake of dplyr
