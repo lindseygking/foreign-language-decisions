@@ -19,7 +19,7 @@ FLDM_tidy_long$ID <- str_pad(FLDM_tidy_long$ID, 3, pad = '0')
 
 
 # export dataframe to a csv file
-write_csv(FLDM_tidy_long, "~/Desktop/UCHI Q2/d2m/foreign-language-decisions/data/FLDM_tidy_long.csv") 
+write_csv(FLDM_tidy_long, "data/FLDM_tidy_long.csv") 
 
 FLDM_German <- FLDM_tidy_long %>% 
   filter(language.group != 5)
